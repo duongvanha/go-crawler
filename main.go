@@ -18,16 +18,16 @@ var dbConnection *gorm.DB
 var l = sync.RWMutex{}
 
 func init() {
-	//db, err := gorm.Open("postgres", "host=localhost port=5432 user=xmvmpwalsagthi dbname=test password=test sslmode=disable")
-	//
-	//if err != nil {
-	//	fmt.Printf("failed to connect database : %v", err)
-	//	panic("failed to connect database")
-	//}
-	//
-	//dbConnection = db
-	//
-	//db.AutoMigrate(&Category{}, &User{}, &Country{}, &Chap{}, &Movie{})
+	db, err := gorm.Open("postgres", os.Getenv("DATABASE_URL"))
+
+	if err != nil {
+		fmt.Printf("failed to connect database : %v", err)
+		panic("failed to connect database")
+	}
+
+	dbConnection = db
+
+	db.AutoMigrate(&Category{}, &User{}, &Country{}, &Chap{}, &Movie{})
 }
 
 type Model struct {
@@ -334,12 +334,6 @@ func crawlerMovie(movieUrl string) {
 
 func main() {
 
-	//startRunCrawlerPage(136, 20)
-	//
-	//defer dbConnection.Close()
-
-	for _, env := range os.Environ() {
-		log(env + "\n")
-	}
+	startRunCrawlerPage(136, 20)
 
 }
