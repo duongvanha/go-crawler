@@ -161,8 +161,8 @@ func getUrlByPageAndPosition(page int, index int) (url string) {
 	l.Unlock()
 
 	if url == "" {
-		time.Sleep(3 * time.Microsecond)
-		log("retry get Document by page : %v \n", url)
+		time.Sleep(1 * time.Second)
+		log("retry get Document by page : %v and position \n", page, index-1)
 		return getUrlByPageAndPosition(page, index)
 	}
 
