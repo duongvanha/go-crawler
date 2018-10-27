@@ -5,6 +5,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/net/html"
 	"net/http"
 	"os"
@@ -162,7 +163,7 @@ func getUrlByPageAndPosition(page int, index int) (url string) {
 
 	if url == "" {
 		time.Sleep(1 * time.Second)
-		log("retry get Document by page : %v and position \n", page, index-1)
+		log("retry get Document by page : %v and position %v \n", page, index-1)
 		return getUrlByPageAndPosition(page, index)
 	}
 
@@ -328,12 +329,14 @@ func crawlerMovie(movieUrl string) {
 		//Trailer:           document.Find("#trailer-preroll-container iframe").AttrOr("src", ""),
 		Keywords: keywords,
 	}
+	l.Lock()
 	dbConnection.FirstOrCreate(&movie, Movie{Url: url})
+	l.Unlock()
 
 }
 
 func main() {
 
-	startRunCrawlerPage(136, 20)
+	startRunCrawlerPage(136, 10)
 
 }
