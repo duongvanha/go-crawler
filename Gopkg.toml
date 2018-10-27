@@ -35,3 +35,4 @@
 
 [metadata.heroku]
   root-package = "github.com/duongvanha/go-crawler"
+  go-version="go1.11.1"
