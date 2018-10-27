@@ -1,0 +1,69 @@
+version: '3'
+services:
+
+  nginx:
+    restart: always
+    build: nginx
+    ports:
+    - 4200:80
+
+  postgres:
+    env_file:
+    - ./.env
+    image: postgres:alpine
+    volumes:
+    - ./configuration/postgres:/usr/src/data
+    ports:
+    - 5432:5432
+
+  redis:
+    env_file:
+    - ./.env
+    image: redis:alpine
+
+  client:
+    build:
+      context: client
+      dockerfile: docker/Dockerfile.${NODE_ENV}
+    volumes:
+    - ./client:/usr/src/app
+    - ./client/node_modules:/usr/src/app/node_modules
+    - ./client/docker/command.${NODE_ENV}.sh:/command.sh
+
+  server:
+    env_file:
+    - ./.env
+    build:
+      context: server
+      dockerfile: Dockerfile.${NODE_ENV}
+    volumes:
+    - ./server:/app
+    - /app/node_modules
+    links:
+    - postgres
+    - redis
+
+  worker:
+    env_file:
+    - ./.env
+    build:
+      context: worker
+      dockerfile: Dockerfile.${NODE_ENV}
+    volumes:
+    - ./:/go/src/github.com/duongvanha/micro-web
+    - /go/src/github.com/duongvanha/worker/vendor
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.4.2
+    ports:
+    - "5601:5601"
+    depends_on:
+    - elasticsearch
+
+  logstash:
+    build: logstash
+    depends_on:
+    - elasticsearch
