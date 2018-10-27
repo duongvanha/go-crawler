@@ -7,6 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/net/html"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -333,7 +334,12 @@ func crawlerMovie(movieUrl string) {
 
 func main() {
 
-	startRunCrawlerPage(136, 20)
+	//startRunCrawlerPage(136, 20)
+	//
+	//defer dbConnection.Close()
 
-	defer dbConnection.Close()
+	for _, env := range os.Environ() {
+		log(env + "\n")
+	}
+
 }
